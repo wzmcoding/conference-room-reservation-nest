@@ -18,11 +18,7 @@ export class UserService {
     private redisService: RedisService;
 
     async register(user: RegisterUserDto) {
-        console.log('user', user);
-        await this.redisService.set(`captcha_${user.email}`, '88888888', 60);
         const captcha = await this.redisService.get(`captcha_${user.email}`);
-        console.log('captcha', captcha);
-
         if (!captcha) {
             throw new HttpException('验证码已失效', HttpStatus.BAD_REQUEST);
         }

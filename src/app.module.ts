@@ -8,6 +8,7 @@ import { User } from './user/entities/user.entity';
 import { Role } from './user/entities/role.entity';
 import { Permission } from './user/entities/permission.entity';
 import { RedisModule } from './redis/redis.module';
+import { EmailModule } from './email/email.module';
 
 
 @Module({
@@ -32,7 +33,7 @@ import { RedisModule } from './redis/redis.module';
         /* sha256_password 是一种更安全的密码认证方式，比传统的认证方式提供更好的安全性。 */
         authPlugin: 'sha256_password',
       }
-    }), UserModule, RedisModule,
+    }), UserModule, RedisModule, EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
