@@ -10,10 +10,24 @@ import { Permission } from './user/entities/permission.entity';
 import { RedisModule } from './redis/redis.module';
 import { EmailModule } from './email/email.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 
 
 @Module({
   imports: [
+    /** 配置 JWT 模块。 **/
+    JwtModule.registerAsync({
+      global: true,
+      useFactory(configService: ConfigService) {
+        return {
+          secret: configService.get('jwt_secret'),
+          signOptions: { 
+            expiresIn: '30m', // 默认 30 分钟
+          }
+        }
+      },
+      inject: [ConfigService]
+    }),
     /** 设置为全局模块，指定 env 文件的位置。 **/
     ConfigModule.forRoot({
       isGlobal: true,
@@ -44,7 +58,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         }
       },
       inject: [ConfigService]
-    }), UserModule, RedisModule, EmailModule,
+    }),
+    UserModule, RedisModule, EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
