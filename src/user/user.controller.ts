@@ -33,4 +33,9 @@ export class UserController {
     return '发送成功';
   }
 
+  @Get('init-data')
+  async initData() {
+    await this.userService.initData();
+    return '初始化数据成功';
+  }
 }
