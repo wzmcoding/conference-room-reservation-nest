@@ -31,6 +31,7 @@ export class InvokeRecordInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       tap((res) => {
+        /** tap 操作符不会修改通过它的数据 - 它只是"观察"数据并执行一些操作（在这个场景中是日志记录） **/
         this.logger.debug(
           `${method} ${path} ${ip} ${userAgent}: ${response.statusCode}: ${Date.now() - now}ms`,
         );
