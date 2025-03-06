@@ -10,6 +10,7 @@ import { Role } from './entities/role.entity';
 import { Permission } from './entities/permission.entity';
 import { LoginUserDto } from './dto/login-user.dto';
 import { LoginUserVo } from './vo/login-user.vo';
+import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 
 @Injectable()
 export class UserService {
@@ -172,4 +173,39 @@ export class UserService {
         }
     }
 
+    async findUserDetailById(userId: number) {
+        const user = await this.userRepository.findOne({
+            where: {
+                id: userId
+            }
+        });
+        return user;
+    }
+
+    async updatePassword(userId: number, passwordDto: UpdateUserPasswordDto) {
+        // 先查询 redis 中有没有邮箱对应的验证码，没有的话就返回验证码不存在或者不正确。
+        const captcha = await this.redisService.get(`update_password_captcha_${passwordDto.email}`);
+
+        if (!captcha) {
+            throw new HttpException('验证码已失效', HttpStatus.BAD_REQUEST);
+        }
+
+        if (passwordDto.captcha !== captcha) {
+            throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
+        }
+
+        const foundUser = await this.userRepository.findOneBy({
+            id: userId
+        });
+
+        foundUser.password = md5(passwordDto.password);
+
+        try {
+            await this.userRepository.save(foundUser);
+            return '密码修改成功';
+        } catch (e) {
+            this.logger.error(e, UserService);
+            return '密码修改失败';
+        }
+    }
 }
