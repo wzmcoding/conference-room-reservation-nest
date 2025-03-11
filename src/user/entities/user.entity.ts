@@ -12,7 +12,8 @@ export class User {
 
     @Column({
         length: 50,
-        comment: '用户名'
+        comment: '用户名',
+        unique: true
     })
     username: string;
 
@@ -76,6 +77,6 @@ export class User {
         name: 'user_roles'
     })
     /* 定义一个存储角色的数组属性 */
-    roles: Role[] 
+    roles: Role[]
 }
 

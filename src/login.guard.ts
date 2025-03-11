@@ -10,6 +10,7 @@ import { UnLoginException } from './unlogin.filter';
 interface JwtUserData {
   userId: number;
   username: string;
+  email: string;
   roles: string[];
   permissions: Permission[]
 }
@@ -53,10 +54,11 @@ export class LoginGuard implements CanActivate {
     try {
       const token = authorization.split(' ')[1];
       const data = this.jwtService.verify<JwtUserData>(token);
-
+      console.log('email999', data.email);
       request.user = {
         userId: data.userId,
         username: data.username,
+        email: data.email,
         roles: data.roles,
         permissions: data.permissions
       }

@@ -14,6 +14,7 @@ export const UserInfo = createParamDecorator(
         if (!request.user) {
             return null;
         }
+        console.log('@UserInfo', request.user);
         return data ? request.user[data] : request.user;
     },
 )
