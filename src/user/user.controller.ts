@@ -1,5 +1,18 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Post, Body, Inject, Get, Query, UnauthorizedException, ParseIntPipe, BadRequestException, DefaultValuePipe, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Inject,
+  Get,
+  Query,
+  UnauthorizedException,
+  ParseIntPipe,
+  BadRequestException,
+  DefaultValuePipe,
+  HttpStatus,
+  UploadedFile, UseInterceptors
+} from "@nestjs/common";
 import { UserService } from './user.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { EmailService } from 'src/email/email.service';
@@ -15,6 +28,10 @@ import { generateParseIntPipe } from 'src/utils';
 import { ApiBearerAuth, ApiBody, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoginUserVo } from './vo/login-user.vo';
 import { RefreshTokenVo } from './vo/refresh-token.vo';
+import { FileInterceptor } from "@nestjs/platform-express";
+import * as path from 'path';
+import { storage } from "../my-file-storage";
+
 
 @ApiTags('用户管理模块')
 @Controller('user')
@@ -32,6 +49,32 @@ export class UserController {
 
   @Inject(ConfigService)
   private configService: ConfigService;
+
+  /**
+   * 上传图片
+   * @param file
+   */
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file', {
+    dest: 'uploads',
+    storage: storage,
+    limits: {
+      fileSize: 1024 * 1024 * 3  // 最大 3M
+    },
+    fileFilter(req, file, callback) {
+      // callback 的第一个参数是 error，第二个参数是是否接收文件。
+      const extname = path.extname(file.originalname);
+      if(['.png', '.jpg', '.gif'].includes(extname)) {
+        callback(null, true);
+      } else {
+        callback(new BadRequestException('只能上传图片'), false);
+      }
+    }
+  }))
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    console.log('file', file);
+    return file.path;
+  }
 
   @ApiQuery({
     name: 'address',
