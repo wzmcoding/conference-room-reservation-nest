@@ -14,6 +14,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
 import { LoginGuard } from './login.guard';
 import { PermissionGuard } from './permission.guard';
+import { MeetingRoomModule } from './meeting-room/meeting-room.module';
+import { MeetingRoom } from "./meeting-room/entities/meeting-room.entity";
 
 
 @Module({
@@ -24,7 +26,7 @@ import { PermissionGuard } from './permission.guard';
       useFactory(configService: ConfigService) {
         return {
           secret: configService.get('jwt_secret'),
-          signOptions: { 
+          signOptions: {
             expiresIn: '30m', // 默认 30 分钟
           }
         }
@@ -50,7 +52,8 @@ import { PermissionGuard } from './permission.guard';
           entities: [
             User,
             Role,
-            Permission
+            Permission,
+            MeetingRoom
           ],
           poolSize: 10, // 连接池大小
           connectorPackage: 'mysql2', // 连接器包
@@ -62,7 +65,7 @@ import { PermissionGuard } from './permission.guard';
       },
       inject: [ConfigService]
     }),
-    UserModule, RedisModule, EmailModule,
+    UserModule, RedisModule, EmailModule, MeetingRoomModule,
   ],
   controllers: [AppController],
   providers: [AppService,
