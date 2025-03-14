@@ -16,6 +16,8 @@ import { LoginGuard } from './login.guard';
 import { PermissionGuard } from './permission.guard';
 import { MeetingRoomModule } from './meeting-room/meeting-room.module';
 import { MeetingRoom } from "./meeting-room/entities/meeting-room.entity";
+import { BookingModule } from './booking/booking.module';
+import { Booking } from "./booking/entities/booking.entity";
 
 
 @Module({
@@ -53,7 +55,8 @@ import { MeetingRoom } from "./meeting-room/entities/meeting-room.entity";
             User,
             Role,
             Permission,
-            MeetingRoom
+            MeetingRoom,
+            Booking
           ],
           poolSize: 10, // 连接池大小
           connectorPackage: 'mysql2', // 连接器包
@@ -65,7 +68,7 @@ import { MeetingRoom } from "./meeting-room/entities/meeting-room.entity";
       },
       inject: [ConfigService]
     }),
-    UserModule, RedisModule, EmailModule, MeetingRoomModule,
+    UserModule, RedisModule, EmailModule, MeetingRoomModule, BookingModule,
   ],
   controllers: [AppController],
   providers: [AppService,
