@@ -19,7 +19,7 @@ import { MeetingRoom } from "./meeting-room/entities/meeting-room.entity";
 import { BookingModule } from './booking/booking.module';
 import { Booking } from "./booking/entities/booking.entity";
 import { StatisticModule } from './statistic/statistic.module';
-
+import * as path from 'path';
 
 @Module({
   imports: [
@@ -39,7 +39,9 @@ import { StatisticModule } from './statistic/statistic.module';
     /** 设置为全局模块，指定 env 文件的位置。 **/
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: 'src/.env'
+      // envFilePath: 'src/.env'
+      // 加载配置文件的目录要改成拼接 __dirname 和 .env 的路径。因为 build 出来的代码没有 src 目录，是直接放在 dist 下的
+      envFilePath: path.join(__dirname, '.env')
     }),
     TypeOrmModule.forRootAsync({
       useFactory(configService: ConfigService) {
